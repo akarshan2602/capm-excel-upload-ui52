@@ -21,6 +21,32 @@
                     press="onSubmit"
                     class="sapUiSmallMarginTop"/>
 
+                <HBox
+                    justifyContent="SpaceAround"
+                    class="sapUiSmallMarginTop sapUiSmallMarginBottom">
+
+                    <ObjectStatus
+                        title="Total"
+                        text="{excel>/summary/total}"/>
+
+                    <ObjectStatus
+                        title="Valid"
+                        text="{excel>/summary/valid}"/>
+
+                    <ObjectStatus
+                        title="Invalid"
+                        text="{excel>/summary/invalid}"/>
+
+                    <ObjectStatus
+                        title="Excel Duplicate"
+                        text="{excel>/summary/duplicate}"/>
+
+                    <ObjectStatus
+                        title="DB Duplicate"
+                        text="{excel>/summary/dbDuplicates}"/>
+
+                </HBox>
+
                 <Table
                     id="idTable"
                     mode="MultiSelect">

@@ -26,4 +26,28 @@ module.exports = cds.service.impl(async function () {
         return "Success";
 
     });
-}); 
+
+    // Enhancement: Check whether uploaded EMPIDs already exist in database
+    this.on("checkDuplicates", async (req) => {
+
+        const empIds = req.data.empIds;
+
+        const db = await cds.connect.to("db");
+
+        // Enhancement: Fetch existing EMPIDs from Employees table
+        const existingEmployees = await db.run(
+            SELECT
+                .from("excel.Employees")
+                .columns("EMPID")
+                .where({
+                    EMPID: {
+                        in: empIds
+                    }
+                })
+        );
+
+        return existingEmployees;
+
+    });
+
+});
