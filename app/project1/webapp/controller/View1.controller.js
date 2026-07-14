@@ -1,0 +1,115 @@
+sap.ui.define([
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageToast"
+], function (Controller, JSONModel, MessageToast) {
+
+    "use strict";
+
+    return Controller.extend("excelupload.project1.controller.View1", {
+
+        onInit: function () {
+
+        },
+
+        onFileUpload: function (oEvent) {
+
+            var oFile = oEvent.getParameter("files")[0];
+
+            if (!oFile) {
+                return;
+            }
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                var data = e.target.result;
+
+                var workbook = XLSX.read(data, {
+                    type: "binary"
+                });
+
+                var sheetName = workbook.SheetNames[0];
+
+                var worksheet = workbook.Sheets[sheetName];
+
+                var aData = XLSX.utils.sheet_to_json(worksheet);
+
+                var oModel = new JSONModel({
+                    excelData: aData
+                });
+
+                this.getView().setModel(oModel, "excel");
+
+                MessageToast.show("Excel loaded successfully");
+
+            }.bind(this);
+
+            reader.readAsBinaryString(oFile);
+        },
+
+        onSubmit: async function () {
+
+            var oTable = this.byId("idTable");
+
+            var aSelectedItems = oTable.getSelectedItems();
+
+            var aSelectedData = [];
+
+            aSelectedItems.forEach(function (oItem) {
+
+                aSelectedData.push(
+                    oItem.getBindingContext("excel").getObject()
+                );
+
+            });
+            aSelectedData = aSelectedData.map(function (emp) {
+                return {
+                    EMPID: String(emp.EMPID),
+                    NAME: String(emp.NAME),
+                    LOCATION: String(emp.LOCATION)
+                };
+            });
+
+            console.log("Selected Rows");
+            console.log(aSelectedData);
+
+            try {
+
+                const response = await fetch(
+                    "/odata/v4/excel/uploadEmployees",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            employees: aSelectedData
+                        })
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const result = await response.text();
+
+                console.log(result);
+
+                MessageToast.show("Data sent successfully");
+
+            } catch (error) {
+
+                console.error(error);
+
+                MessageToast.show("Backend call failed");
+
+            }
+
+        }
+
+    });
+    
+});

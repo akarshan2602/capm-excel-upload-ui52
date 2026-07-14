@@ -1,0 +1,63 @@
+<mvc:View
+    controllerName="excelupload.project1.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:u="sap.ui.unified">
+
+    <Page title="Excel Upload">
+
+        <content>
+
+            <VBox class="sapUiSmallMargin">
+
+                <u:FileUploader
+                    id="fileUploader"
+                    fileType="xlsx"
+                    width="400px"
+                    change="onFileUpload"/>
+
+                <Button
+                    text="Submit Selected Rows"
+                    press="onSubmit"
+                    class="sapUiSmallMarginTop"/>
+
+                <Table
+                    id="idTable"
+                    mode="MultiSelect"
+                    items="{excel>/excelData}">
+
+                    <columns>
+                        <Column>
+                            <Text text="EMPID"/>
+                        </Column>
+
+                        <Column>
+                            <Text text="NAME"/>
+                        </Column>
+
+                        <Column>
+                            <Text text="LOCATION"/>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+
+                            <cells>
+                                <Text text="{excel>EMPID}"/>
+                                <Text text="{excel>NAME}"/>
+                                <Text text="{excel>LOCATION}"/>
+                            </cells>
+
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+
+            </VBox>
+
+        </content>
+
+    </Page>
+
+</mvc:View>
